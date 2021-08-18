@@ -4,6 +4,7 @@ import './App.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined, createFromIconfontCN } from '@ant-design/icons';
 import Logo from './logo.svg';
+import UserAgentList from './UserAgentList';
 
 
 const IconFont = createFromIconfontCN({
@@ -19,10 +20,12 @@ class App extends React.Component {
 
   state = {
     contentStr: "content",
+    page: "baidu",
   }
 
-  switchContent = (info: any) => {
-    this.setState({ contentStr: info['keyPath'] });
+  switchContent = (info) => {
+    this.setState({ contentStr: info['keyPath'][1] + ' -> '+ info['keyPath'][0], page: info['keyPath'][1].substr(5) });
+    console.log(info);
   }
 
   render() {
@@ -64,7 +67,9 @@ class App extends React.Component {
               </SubMenu>
             </Menu>
           </Sider>
-          <Content style={{ padding: '0 24px', minHeight: 680 }}>{this.state.contentStr}</Content>
+          <Content style={{ padding: '0 24px', minHeight: 680 }}>{this.state.contentStr}
+          <UserAgentList type={this.state.page}/>
+          </Content>
         </Layout>
       </Content>
       <Footer style={{ textAlign: 'center' }}>Sogou-MagicBox ©2021 Created by Yangzhichao01.</Footer>
