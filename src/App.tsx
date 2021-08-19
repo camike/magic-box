@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './App.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined, createFromIconfontCN } from '@ant-design/icons';
-import Logo from './logo.svg';
-import UserAgentList from './UserAgentList';
+import { Layout, Menu } from 'antd';
+import { createFromIconfontCN } from '@ant-design/icons';
+import PageInfo from './PageInfo';
+import { PageListInfo, WebPageItem } from './interfaces/PageInfo';
+import PageData from './data/pageData'
 
 
 const IconFont = createFromIconfontCN({
@@ -19,13 +19,21 @@ const { Header, Content, Footer, Sider } = Layout;
 class App extends React.Component {
 
   state = {
-    contentStr: "content",
-    page: "baidu",
+    renderData: null,
+  }
+
+  getRenderData = (groupName: string, index: number)=>{
+    for (let i = 0; i < PageData.length; i++) {
+      if (PageData[i].groupName == groupName) {
+        return PageData[i].list[index];
+      }
+    }
   }
 
   switchContent = (info) => {
-    this.setState({ contentStr: info['keyPath'][1] + ' -> '+ info['keyPath'][0], page: info['keyPath'][1].substr(5) });
-    console.log(info);
+    const groupName = info['keyPath'][1].substr(5);
+    const index = info['keyPath'][0];
+    this.setState({renderData: this.getRenderData(groupName, index)});
   }
 
   render() {
@@ -47,28 +55,23 @@ class App extends React.Component {
               defaultOpenKeys={['sub1']}
               style={{ height: '100%' }}
             >
-              <SubMenu key="page-baidu" icon={<IconFont type="icon-baidu" />} title="baidu">
-                <Menu.Item key="1" onClick={this.switchContent}>UserAgent</Menu.Item>
-                <Menu.Item key="2" onClick={this.switchContent}>JavaScript</Menu.Item>
-                <Menu.Item key="3" onClick={this.switchContent}>CSS</Menu.Item>
-                <Menu.Item key="4" onClick={this.switchContent}>Other</Menu.Item>
-              </SubMenu>
-              <SubMenu key="page-csdn" icon={<IconFont type="icon-csdn" />} title="csdn">
-                <Menu.Item key="5" onClick={this.switchContent}>UserAgent</Menu.Item>
-                <Menu.Item key="6" onClick={this.switchContent}>JavaScript</Menu.Item>
-                <Menu.Item key="7" onClick={this.switchContent}>CSS</Menu.Item>
-                <Menu.Item key="8" onClick={this.switchContent}>Other</Menu.Item>
-              </SubMenu>
-              <SubMenu key="page-sina" icon={<IconFont type="icon-sina" />} title="sina">
-                <Menu.Item key="9" onClick={this.switchContent}>UserAgent</Menu.Item>
-                <Menu.Item key="10" onClick={this.switchContent}>JavaScript</Menu.Item>
-                <Menu.Item key="11" onClick={this.switchContent}>CSS</Menu.Item>
-                <Menu.Item key="12" onClick={this.switchContent}>Other</Menu.Item>
-              </SubMenu>
+              {
+                PageData.map((pageInfo: PageListInfo)=>{
+                  return (
+                    <SubMenu key={"page-"+pageInfo.groupName} icon={<IconFont type={"icon-"+pageInfo.groupName} />} title={pageInfo.groupName}>
+                      {
+                        pageInfo.list.map((pageItem: WebPageItem, index: number)=>{
+                          return (<Menu.Item key={index} onClick={this.switchContent}>{pageItem.title}</Menu.Item>)
+                        })
+                      }
+                    </SubMenu>
+                  )
+                })
+              }
             </Menu>
           </Sider>
-          <Content style={{ padding: '0 24px', minHeight: 680 }}>{this.state.contentStr}
-          <UserAgentList type={this.state.page}/>
+          <Content style={{ padding: '0 24px', minHeight: 680 }}>
+          <PageInfo data={this.state.renderData}/>
           </Content>
         </Layout>
       </Content>

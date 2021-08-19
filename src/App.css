@@ -26,3 +26,19 @@
   line-height: 2.2em;
   color:rgb(174, 211, 228);
 }
+
+.site-card-wrapper {
+  padding: 30px;
+  background: #ececec;
+}
+
+.tab-container-center {
+  text-align: center;
+  padding-top: 10em;
+  word-break: break-all;
+}
+
+.img-container{
+  text-align: center;
+  margin-top: 1em;
+}
