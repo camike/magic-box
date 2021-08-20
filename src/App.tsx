@@ -18,11 +18,13 @@ const { Header, Content, Footer, Sider } = Layout;
 
 class App extends React.Component {
 
+  isPC: boolean = window.screen.availWidth > 1000;
+
   state = {
     renderData: null,
   }
 
-  getRenderData = (groupName: string, index: number)=>{
+  getRenderData = (groupName: string, index: number) => {
     for (let i = 0; i < PageData.length; i++) {
       if (PageData[i].groupName == groupName) {
         return PageData[i].list[index];
@@ -32,8 +34,8 @@ class App extends React.Component {
 
   switchContent = (info) => {
     const groupName = info['keyPath'][1].substr(5);
-    const index = info['keyPath'][0];
-    this.setState({renderData: this.getRenderData(groupName, index)});
+    const index = info['keyPath'][0].substr(groupName.length);
+    this.setState({ renderData: this.getRenderData(groupName, index) });
   }
 
   render() {
@@ -48,7 +50,7 @@ class App extends React.Component {
       </Header>
       <Content >
         <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-          <Sider className="site-layout-background" width={200}>
+          <Sider className="site-layout-background" width={200} collapsible collapsed={!this.isPC}>
             <Menu
               mode="inline"
               defaultSelectedKeys={['1']}
@@ -56,12 +58,12 @@ class App extends React.Component {
               style={{ height: '100%' }}
             >
               {
-                PageData.map((pageInfo: PageListInfo)=>{
+                PageData.map((pageInfo: PageListInfo) => {
                   return (
-                    <SubMenu key={"page-"+pageInfo.groupName} icon={<IconFont type={"icon-"+pageInfo.groupName} />} title={pageInfo.groupName}>
+                    <SubMenu key={"page-" + pageInfo.groupName} icon={<IconFont type={"icon-" + pageInfo.groupName} />} title={pageInfo.groupName}>
                       {
-                        pageInfo.list.map((pageItem: WebPageItem, index: number)=>{
-                          return (<Menu.Item key={index} onClick={this.switchContent}>{pageItem.title}</Menu.Item>)
+                        pageInfo.list.map((pageItem: WebPageItem, index) => {
+                          return (<Menu.Item key={pageInfo.groupName+index} onClick={this.switchContent}>{pageItem.title}</Menu.Item>)
                         })
                       }
                     </SubMenu>
@@ -71,7 +73,7 @@ class App extends React.Component {
             </Menu>
           </Sider>
           <Content style={{ padding: '0 24px', minHeight: 680 }}>
-          <PageInfo data={this.state.renderData}/>
+            <PageInfo data={this.state.renderData} />
           </Content>
         </Layout>
       </Content>
