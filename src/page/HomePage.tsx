@@ -2,12 +2,12 @@ import React from 'react';
 import { Layout, Menu } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons';
 import SitePanel from '../web/SitePanel';
-import { PageListInfo, WebPageItem } from '../interfaces/SiteInfo';
+import { PageListInfo, WebPageItem } from '../interfaces/SiteInfoInterface';
 import PageData from '../data/pageData'
 
 const IconFont = createFromIconfontCN({
   scriptUrl: [
-    '//at.alicdn.com/t/font_2753363_0lbabkpnse9p.js', // icon-baidu, icon-csdn, icon-sina, icon-jiami
+    '//at.alicdn.com/t/font_2753363_4zcvncih3s4.js', // icon-baidu, icon-csdn, icon-sina, icon-jiami, icon-back
   ],
 });
 

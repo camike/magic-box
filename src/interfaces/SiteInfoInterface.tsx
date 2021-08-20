@@ -1,7 +1,11 @@
 
-export interface ImageInfo {
-    src: string;
-    desc: string;
+
+// 问题汇总列表，一行
+export interface CaseItem {
+    title: string;
+    description: string;
+    resolved: boolean;
+    images: string[];
 }
 
 export interface WebPageItem {
@@ -12,8 +16,8 @@ export interface WebPageItem {
         ua_tags: string[];
         css: string;
         javascript: string;
-        infoImgs: ImageInfo[];
         tips: string;
+        cases: CaseItem[];
     }
 }
 
