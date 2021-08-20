@@ -9,7 +9,7 @@ export interface WebPageItem {
     title: string;
     data: {
         ua: string;
-        ua_tags?: string[];
+        ua_tags: string[];
         css: string;
         javascript: string;
         infoImgs: ImageInfo[];

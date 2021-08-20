@@ -42,3 +42,19 @@
   text-align: center;
   margin-top: 1em;
 }
+
+.encrypt_tint {
+  width: 100%;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+}
+
+.encrypt_btn_container {
+  text-align: center;
+}
+
+.encrypt_textarea {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
