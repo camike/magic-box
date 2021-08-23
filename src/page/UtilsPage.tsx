@@ -2,6 +2,10 @@ import React from 'react';
 import { Button, Input, Layout, Menu } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons';
 import { Header } from 'antd/lib/layout/layout';
+import { UnControlled as CodeMirror } from 'react-codemirror2'
+require('codemirror/mode/xml/xml');
+require('codemirror/mode/javascript/javascript');
+
 
 const IconFont = createFromIconfontCN({
   scriptUrl: [
@@ -13,9 +17,9 @@ const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 const isPC: boolean = window.screen.availWidth > 1000;
 
-enum ALGORITHM  {
-  BASE64="base64",
-  URI_COMPONENT="URIComponent",
+enum ALGORITHM {
+  BASE64 = "base64",
+  URI_COMPONENT = "URIComponent",
 }
 
 class UtilsPage extends React.Component {
@@ -28,7 +32,7 @@ class UtilsPage extends React.Component {
   }
 
   changeAlgorthm = (info) => {
-    this.setState({...this.state, currentAlgorthm: info['key']});
+    this.setState({ ...this.state, currentAlgorthm: info['key'] });
   }
 
   handleEncrypt = () => {
@@ -64,7 +68,7 @@ class UtilsPage extends React.Component {
 
   render() {
     return <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-      <Sider className="site-layout-background" width={200}  collapsed={!isPC}>
+      <Sider className="site-layout-background" width={200} collapsed={!isPC}>
         <Menu
           mode="inline"
           style={{ height: '100%' }}
@@ -77,7 +81,7 @@ class UtilsPage extends React.Component {
       </Sider>
       <Content style={{ padding: '0 24px', minHeight: 700 }}>
         <Layout>
-        <Header style={{color: "black", background: "#85643211"}}>{this.state.currentAlgorthm + " 算法"}</Header>
+          <Header style={{ color: "black", background: "#85643211" }}>{this.state.currentAlgorthm + " 算法"}</Header>
           <div className="encrypt_tint">输入要加、解密的文本</div>
           <Content>
             <Input.TextArea className="encrypt_textarea" rows={10} ref={(el) => { this.inputTextarea = el }} />
@@ -88,6 +92,16 @@ class UtilsPage extends React.Component {
             <Input.TextArea className="encrypt_textarea" value={this.state.outputTextValue} rows={10} ref={(el) => { this.outputTextarea = el }} />
           </Content>
         </Layout>
+        <CodeMirror
+          value='<h1>I ♥ react-codemirror2</h1>'
+          options={{
+            mode: 'xml',
+            theme: 'material',
+            lineNumbers: true
+          }}
+          onChange={(editor, data, value) => {
+          }}
+        />
 
       </Content>
     </Layout>
