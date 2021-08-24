@@ -38,11 +38,11 @@ class CaseTab extends React.Component<IProps> {
       itemLayout="horizontal"
       dataSource={this.props.data.data.cases}
       split={false}
-      renderItem={item => (
-        <List.Item>
+      renderItem={(item, index) => (
+        <List.Item key={index}>
           <List.Item.Meta
             avatar={<Avatar style={{ backgroundColor: item.resolved ? 'green' : '#660000' }}>C</Avatar>}
-            title={<a href="#" onClick={() => this.showCase(item)}>{item.title}</a>}
+            title={<a onClick={() => this.showCase(item)}>{item.title}</a>}
             description={item.description.length > shortDescLength ? item.description.substr(0, shortDescLength) + '...' : item.description}
           />
         </List.Item>
@@ -50,7 +50,7 @@ class CaseTab extends React.Component<IProps> {
     /> :
       <Layout>
         <Header style={{ color: "black", background: "#85643211" }}>
-          <IconFont type="icon-back"></IconFont><a href='#' onClick={this.back} style={{ color: 'black' }}><span>返回上一层</span></a>
+          <IconFont type="icon-back"></IconFont><a  onClick={this.back} style={{ color: 'black' }}><span>返回上一层</span></a>
         </Header>
         <Content style={{ padding: 20 }}>
           <h2>{this.state.showingCase.title}</h2>

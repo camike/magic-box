@@ -3,7 +3,7 @@ import { Layout, Menu } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons';
 import SitePanel from '../web/SitePanel';
 import { PageListInfo, WebPageItem } from '../interfaces/SiteInfoInterface';
-import PageData from '../data/pageData'
+// import PageData from '../data/pageData'
 
 const IconFont = createFromIconfontCN({
   scriptUrl: [
@@ -18,25 +18,42 @@ const isPC: boolean = window.screen.availWidth > 1000;
 class HomePage extends React.Component {
   state = {
     renderData: null,
+    PageData: window['pageItemList'] ? window['pageItemList'] : [],
+  }
+  groupIndex = -1;
+  itemIndex = -1;
+
+  componentWillMount() {
+    if (window['pageItemList']) {
+      return;
+    }
+    window['setPageItemList'] = (pageData) => {
+      window['pageItemList'] = pageData;
+      this.setState({ ...this.state, PageData: window['pageItemList'] });
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/?action=getAllGroupList");
+    xhr.onload = () => {
+      window['setPageItemList'](JSON.parse(xhr.response));
+    }
+    xhr.send();
   }
 
   switchContent = (info) => {
-    const groupName = info['keyPath'][1].substr(5);
-    const index = info['keyPath'][0].substr(groupName.length);
-    this.setState({ renderData: this.getRenderData(groupName, index) });
+    this.groupIndex = info['keyPath'][1];
+    const groupName = this.state.PageData[this.groupIndex].groupName;
+    this.itemIndex = info['keyPath'][0].substr(groupName.length);
+    this.setState({ renderData: this.getRenderData(this.groupIndex, this.itemIndex) });
   }
 
-  getRenderData = (groupName: string, index: number) => {
-    for (let i = 0; i < PageData.length; i++) {
-      if (PageData[i].groupName == groupName) {
-        return PageData[i].list[index];
-      }
-    }
+  getRenderData = (groupIndex: number, itemIndex: number) => {
+    console.log(groupIndex, itemIndex);
+    return this.state.PageData[groupIndex].list[itemIndex];
   }
 
   render() {
     return <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-      <Sider className="site-layout-background" width={200}  collapsed={!isPC}>
+      <Sider className="site-layout-background" width={200} collapsed={!isPC}>
         <Menu
           mode="inline"
           defaultSelectedKeys={['1']}
@@ -44,12 +61,12 @@ class HomePage extends React.Component {
           style={{ height: '100%' }}
         >
           {
-            PageData.map((pageInfo: PageListInfo) => {
+            this.state.PageData.map((pageInfo: PageListInfo, groupIndex) => {
               return (
-                <SubMenu key={"page-" + pageInfo.groupName} icon={<IconFont type={"icon-" + pageInfo.groupName} />} title={pageInfo.groupName}>
+                <SubMenu key={groupIndex} icon={<IconFont type={"icon-" + pageInfo.groupName} />} title={pageInfo.groupName}>
                   {
-                    pageInfo.list.map((pageItem: WebPageItem, index) => {
-                      return (<Menu.Item key={pageInfo.groupName + index} onClick={this.switchContent}>{pageItem.title}</Menu.Item>)
+                    pageInfo.list.map((pageItem: WebPageItem, itemIndex) => {
+                      return (<Menu.Item key={pageInfo.groupName + itemIndex} onClick={this.switchContent}>{pageItem.title}</Menu.Item>)
                     })
                   }
                 </SubMenu>
@@ -59,7 +76,7 @@ class HomePage extends React.Component {
         </Menu>
       </Sider>
       <Content style={{ padding: '0 24px', minHeight: 700 }}>
-        <SitePanel data={this.state.renderData} />
+        <SitePanel data={this.state.renderData} groupIndex={this.groupIndex} itemIndex={this.itemIndex} />
       </Content>
     </Layout>;
   }
