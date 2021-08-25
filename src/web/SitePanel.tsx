@@ -75,8 +75,8 @@ class SitePanel extends React.Component<IProps> {
             this.props.data ?
                 <div>
                     <Tabs defaultActiveKey="10" centered tabPosition={this.isPC ? "right" : "top"}>
-                        <TabPane tab="问题列表" key="0">
-                            <CaseTab data={this.props.data} />
+                        <TabPane tab="问题描述" key="0">
+                            <CaseTab data={this.props.data} groupIndex={this.props.groupIndex} itemIndex={this.props.itemIndex}/>
                         </TabPane>
                         <TabPane tab="useragent" key="1">
                             {

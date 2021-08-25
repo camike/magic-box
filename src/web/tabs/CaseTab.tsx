@@ -1,8 +1,10 @@
 import React from 'react';
-import { List, Avatar, Image } from 'antd';
 import Layout, { Header, Content } from 'antd/lib/layout/layout';
 import { createFromIconfontCN } from '@ant-design/icons';
 import { WebPageItem } from '../../interfaces/SiteInfoInterface';
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: [
@@ -10,15 +12,20 @@ const IconFont = createFromIconfontCN({
   ],
 });
 
-const shortDescLength = 30;
-
 interface IProps {
   data: WebPageItem;
+  groupIndex: number;
+  itemIndex: number;
 }
 
 class CaseTab extends React.Component<IProps> {
   state = {
-    showingCase: null,
+    editingCase: false,
+  }
+
+  editorValue = null;
+  setValue = (value) => {
+    this.editorValue = value;
   }
 
   showCase = (item) => {
@@ -26,45 +33,72 @@ class CaseTab extends React.Component<IProps> {
   }
 
   back = () => {
-    this.setState({ ...this.state, showingCase: null });
+    this.setState({ ...this.state, editingCase: false });
+  }
+
+  updateToWindow = (itemData) => {
+    const pageData = window['pageItemList'];
+    pageData[this.props.groupIndex].list[this.props.itemIndex] = itemData;
+    window['setPageItemList'](pageData);
+  }
+
+  saveToServer = (itemData) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", '/?action=addOrUpdateItem');
+    var bundle = { groupName: window['pageItemList'][this.props.groupIndex].groupName, item: itemData };
+    xhr.send(JSON.stringify(bundle));
+  }
+
+
+  saveEditingCase = () => {
+    const itemData = this.props.data;
+    itemData.data.cases = this.editorValue;
+    this.updateToWindow(itemData);
+    this.saveToServer(itemData);
+    this.back();
+  }
+
+  edit = () => {
+    this.setState({ ...this.state, editingCase: true });
   }
 
   componentWillReceiveProps() {
     this.back();
   }
 
+
+  modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+      ['link'],
+      ['image'],
+      ['clean'],
+    ]
+  };
+
+  formats = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image'];
+
   render() {
-    return this.state.showingCase == null ? <List
-      itemLayout="horizontal"
-      dataSource={this.props.data.data.cases}
-      split={false}
-      renderItem={(item, index) => (
-        <List.Item key={index}>
-          <List.Item.Meta
-            avatar={<Avatar style={{ backgroundColor: item.resolved ? 'green' : '#660000' }}>C</Avatar>}
-            title={<a onClick={() => this.showCase(item)}>{item.title}</a>}
-            description={item.description.length > shortDescLength ? item.description.substr(0, shortDescLength) + '...' : item.description}
-          />
-        </List.Item>
-      )}
-    /> :
-      <Layout>
-        <Header style={{ color: "black", background: "#85643211" }}>
-          <IconFont type="icon-back"></IconFont><a  onClick={this.back} style={{ color: 'black' }}><span>返回上一层</span></a>
-        </Header>
-        <Content style={{ padding: 20 }}>
-          <h2>{this.state.showingCase.title}</h2>
-          <div>
-            {this.state.showingCase.description}
-            <br /><br />
-            {
-              this.state.showingCase.images.map((src) => {
-                return <Image src={src}></Image>
-              })
-            }
-          </div>
-        </Content>
-      </Layout>
+    return (
+      this.state.editingCase ?
+        <>
+          <IconFont type="icon-back"></IconFont><a onClick={this.back} style={{ color: 'black' }}><span>返回上一层</span></a>
+          <ReactQuill style={{ width: '100%', height: 600 }} theme="snow" value={this.props.data.data.cases} onChange={this.setValue} formats={this.formats} modules={this.modules} />
+          <br></br><br></br>
+          <a onClick={this.saveEditingCase}>保存</a>
+        </>
+        :
+        <Layout>
+          <Header style={{ color: "black", background: "#85643211" }}>
+            <a onClick={this.edit}>编辑</a>
+          </Header>
+          <Content>
+            <div dangerouslySetInnerHTML={{ __html: this.props.data.data.cases }}></div>
+          </Content>
+        </Layout>
+    )
   }
 }
 

@@ -1,13 +1,3 @@
-
-
-// 问题汇总列表，一行
-export interface CaseItem {
-    title: string;
-    description: string;
-    resolved: boolean;
-    images: string[];
-}
-
 export interface WebPageItem {
     url: string;
     title: string;
@@ -17,7 +7,7 @@ export interface WebPageItem {
         css: string;
         javascript: string;
         tips: string;
-        cases: CaseItem[];
+        cases: string;
     }
 }
 
